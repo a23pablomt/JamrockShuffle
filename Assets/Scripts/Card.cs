@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -15,6 +16,10 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
 
     private float lastSwapTime = 0f; // Tracks when the last swap occurred
     private float swapCooldown = 0.5f; // Cooldown time between swaps (in seconds)
+
+    private FieldSllot fieldSlot;
+    public RectTransform fieldSlotRect;
+
 
     void Start()
     {
@@ -52,8 +57,22 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
 
     public void OnEndDrag(PointerEventData eventData)
     {
+        if (IsOverFieldSlot()){
+            fieldSlot.OnCardDrop(this);
+        }
+        else{
+            moveCoroutine = StartCoroutine(SmoothMoveToPosition(startPosition));
+        }
+
         isDragging = false;
-        moveCoroutine = StartCoroutine(SmoothMoveToPosition(startPosition));
+        
+    }
+
+    private bool IsOverFieldSlot()
+    {
+        Vector2 localPoint;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(fieldSlotRect, Input.mousePosition, null, out localPoint);
+        return fieldSlotRect.rect.Contains(localPoint); // Check if the point is inside the FieldSlot's RectTransform
     }
 
     //private Card FindClosestCard()
