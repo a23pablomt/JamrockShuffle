@@ -44,4 +44,12 @@ public class ZoneController : MonoBehaviour
             AddCardSlot();
         ArrangeSlots();
     }
+
+    public void OnPointerEnter(){
+        transform.position = new Vector3(0, -237, 0);
+    }
+
+    public void OnPointerExit(){
+        transform.position = new Vector3(0, -290, 0);
+    }
 }

@@ -1,30 +1,40 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
+public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
 {
     private bool isDragging;
-    private Vector3 startPosition;
+    public Vector3 startPosition;
     private static List<Card> allCards = new List<Card>(); // Store all cards
     private Coroutine moveCoroutine;
     private static float swapThreshold = 1.5f; // Adjust this for swap sensitivity
 
     [SerializeField] private float returnSpeed = 10f; // Speed of smooth return
-
     private float lastSwapTime = 0f; // Tracks when the last swap occurred
     private float swapCooldown = 0.5f; // Cooldown time between swaps (in seconds)
 
-    private FieldSllot fieldSlot;
-    public RectTransform fieldSlotRect;
+    [SerializeField] public GameObject field;
+    private List<FieldSlot> fieldSlot = new List<FieldSlot>(); // Use a list instead of array
 
-
+    // Initialization
     void Start()
     {
         allCards.Add(this); // Register this card
         startPosition = transform.parent.position; // Set initial position
+
+        // Populate fieldSlot with FieldSlot components found in children of field GameObject
+        foreach (FieldSlot item in field.GetComponentsInChildren<FieldSlot>())
+        {
+            fieldSlot.Add(item);
+        }
+
+        // Check if we have any FieldSlot components
+        if (fieldSlot.Count == 0)
+        {
+            Debug.LogError("No FieldSlot components found in the field GameObject!");
+        }
     }
 
     void Update()
@@ -57,22 +67,17 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        if (IsOverFieldSlot()){
-            fieldSlot.OnCardDrop(this);
-        }
-        else{
-            moveCoroutine = StartCoroutine(SmoothMoveToPosition(startPosition));
+        foreach (FieldSlot slot in fieldSlot)
+        {
+            if (slot.isOver){
+                slot.OnCardDrop(this);
+                break;
+            }
         }
 
+        moveCoroutine = StartCoroutine(SmoothMoveToPosition(startPosition));
         isDragging = false;
         
-    }
-
-    private bool IsOverFieldSlot()
-    {
-        Vector2 localPoint;
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(fieldSlotRect, Input.mousePosition, null, out localPoint);
-        return fieldSlotRect.rect.Contains(localPoint); // Check if the point is inside the FieldSlot's RectTransform
     }
 
     //private Card FindClosestCard()
@@ -129,4 +134,15 @@ private IEnumerator SmoothMoveToPosition(Vector3 targetPos)
     transform.position = targetPos;
 }
 
+    public Vector3 originalScale;
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        originalScale = transform.localScale;  // Save the original scale
+        transform.localScale *= 1.5f;           // Decrease the card size by 33%
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        transform.localScale = originalScale;  // Restore the original scale
+    }
 }
