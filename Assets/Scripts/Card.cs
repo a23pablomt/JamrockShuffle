@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEditor.Search;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -15,12 +17,14 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
     private float lastSwapTime = 0f; // Tracks when the last swap occurred
     private float swapCooldown = 0.5f; // Cooldown time between swaps (in seconds)
 
-    [SerializeField] public GameObject field;
+    public GameObject field;
     private List<FieldSlot> fieldSlot = new List<FieldSlot>(); // Use a list instead of array
 
     // Initialization
     void Start()
     {
+
+        field = GameObject.FindGameObjectWithTag("Field"); // Find the Field GameObject
         allCards.Add(this); // Register this card
         startPosition = transform.parent.position; // Set initial position
 
@@ -28,12 +32,6 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
         foreach (FieldSlot item in field.GetComponentsInChildren<FieldSlot>())
         {
             fieldSlot.Add(item);
-        }
-
-        // Check if we have any FieldSlot components
-        if (fieldSlot.Count == 0)
-        {
-            Debug.LogError("No FieldSlot components found in the field GameObject!");
         }
     }
 
@@ -54,7 +52,7 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
     {
         Vector3 mousePos = Input.mousePosition;
         mousePos.z = Camera.main.WorldToScreenPoint(transform.position).z;
-        transform.position = Vector3.Lerp(transform.position, Camera.main.ScreenToWorldPoint(mousePos), 0.3f);
+        transform.position = Vector3.Lerp(transform.position, Camera.main.ScreenToWorldPoint(mousePos), 1f);
 
             //Card closestCard = FindClosestCard();
             //if (closestCard != null && closestCard != this && Vector3.Distance(transform.position, closestCard.transform.position) < swapThreshold)
@@ -67,11 +65,15 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
 
     public void OnEndDrag(PointerEventData eventData)
     {
+        transform.localScale = originalScale;
         foreach (FieldSlot slot in fieldSlot)
         {
             if (slot.isOver){
-                slot.OnCardDrop(this);
-                break;
+                GameObject slotCard = transform.parent.gameObject;
+                transform.parent = slot.transform;
+                Destroy(slotCard.gameObject);
+                startPosition = slot.transform.position;
+
             }
         }
 
@@ -137,12 +139,16 @@ private IEnumerator SmoothMoveToPosition(Vector3 targetPos)
     public Vector3 originalScale;
     public void OnPointerEnter(PointerEventData eventData)
     {
+        if (isDragging) return; // Skip scaling up if the card is being dragged
         originalScale = transform.localScale;  // Save the original scale
         transform.localScale *= 1.5f;           // Decrease the card size by 33%
+        transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y+50, transform.localPosition.z);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
+        if (isDragging) return; // Skip scaling down if the card is being dragged
         transform.localScale = originalScale;  // Restore the original scale
+        transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y-50, transform.localPosition.z);
     }
 }

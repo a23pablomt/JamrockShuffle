@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class ZoneController : MonoBehaviour
+public class ZoneController : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] GameObject CardSlot; // Assign in Unity Inspector
     private List<GameObject> cardSlots = new List<GameObject>(); // Store CardSlots
@@ -21,19 +21,21 @@ public class ZoneController : MonoBehaviour
         GameObject cardSlot = Instantiate(CardSlot, transform);
         cardSlots.Add(cardSlot);
 
-        ArrangeSlots(); // Space out slots evenly
+        ArrangeSlots();
     }
 
     void ArrangeSlots()
     {
         if (cardSlots.Count == 0) return;
 
+        // Calculate total width and the starting X position for slot placement
         float totalWidth = originalSpacing;
         float startX = -totalWidth / 2f;
 
         for (int i = 0; i < cardSlots.Count; i++)
         {
-            Vector3 targetPosition = new Vector3(startX + (i * (originalSpacing/cardSlots.Count)), 0, 0);
+            float spacing = cardSlots.Count > 1 ? originalSpacing / (cardSlots.Count - 1) : originalSpacing;
+            Vector3 targetPosition = new Vector3(startX + (i * spacing), 0, 0);
             cardSlots[i].transform.localPosition = targetPosition;
         }
     }
@@ -42,14 +44,24 @@ public class ZoneController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
             AddCardSlot();
-        ArrangeSlots();
+        
+        ArrangeSlots(); // Continuously space out slots as needed
+    }
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        // Move the parent zone relative to its original position (in local space)
+        transform.localPosition = new Vector3(0, -237, 0);
+
+        // Re-arrange child slots after moving the parent
+        ArrangeSlots(); // Ensure the slots adjust their positions after parent movement
     }
 
-    public void OnPointerEnter(){
-        transform.position = new Vector3(0, -237, 0);
-    }
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        // Move the parent zone relative to its original position (in local space)
+        transform.localPosition = new Vector3(0, -290, 0);
 
-    public void OnPointerExit(){
-        transform.position = new Vector3(0, -290, 0);
+        // Re-arrange child slots after moving the parent
+        ArrangeSlots(); // Ensure the slots adjust their positions after parent movement
     }
 }

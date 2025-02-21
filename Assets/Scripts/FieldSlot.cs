@@ -18,7 +18,8 @@ public class FieldSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         
     }
     public void OnCardDrop(Card card){
-        card.startPosition = transform.position;
+        Debug.Log("Card dropped on FieldSlot");
+        card.startPosition = this.transform.position;
         card.transform.SetParent(transform);
         card.transform.position = transform.position;
         card.transform.localScale = card.originalScale;
