@@ -17,12 +17,10 @@ public class FieldSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     {
         
     }
-    public void OnCardDrop(Card card){
-        Debug.Log("Card dropped on FieldSlot");
-        card.startPosition = this.transform.position;
-        card.transform.SetParent(transform);
-        card.transform.position = transform.position;
-        card.transform.localScale = card.originalScale;
+    public void AddCard(Card card)
+    {
+        Card newCard = Instantiate(card);
+        newCard.transform.SetParent(transform, false);
     }
 
     public void OnPointerEnter(PointerEventData eventData)

@@ -11,11 +11,8 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
     public Vector3 startPosition;
     private static List<Card> allCards = new List<Card>(); // Store all cards
     private Coroutine moveCoroutine;
-    private static float swapThreshold = 1.5f; // Adjust this for swap sensitivity
 
     [SerializeField] private float returnSpeed = 10f; // Speed of smooth return
-    private float lastSwapTime = 0f; // Tracks when the last swap occurred
-    private float swapCooldown = 0.5f; // Cooldown time between swaps (in seconds)
 
     public GameObject field;
     private List<FieldSlot> fieldSlot = new List<FieldSlot>(); // Use a list instead of array
@@ -69,16 +66,24 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
         foreach (FieldSlot slot in fieldSlot)
         {
             if (slot.isOver){
+                Debug.Log("Card dropped on FieldSlot");
                 GameObject slotCard = transform.parent.gameObject;
-                transform.parent = slot.transform;
-                Destroy(slotCard.gameObject);
+                transform.SetParent(slot.transform);
                 startPosition = slot.transform.position;
-
+                Destroy(slotCard);
+                moveCoroutine = StartCoroutine(SmoothMoveToPosition(startPosition));
+                isDragging = false;
+                slot.AddCard(this);
+                Destroy(this);
+            }
+            else
+            {
+                moveCoroutine = StartCoroutine(SmoothMoveToPosition(startPosition));
+                isDragging = false;
             }
         }
 
-        moveCoroutine = StartCoroutine(SmoothMoveToPosition(startPosition));
-        isDragging = false;
+        
         
     }
 
