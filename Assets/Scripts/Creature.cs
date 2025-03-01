@@ -21,7 +21,7 @@ public class Creature : MonoBehaviour
         keywordIcons = new List<Sprite>();
 
         // Load the creature data
-        SetupCard("Paco", Resources.Load<Sprite>("Images/Terence"), new string[] { "Flying", "QuickDraw" }, 1, 1);
+        SetupCard("Chiasa, Dama Sombría", new string[] { "Flying", "QuickDraw" }, 1, 1);
 
         foreach (Transform child in transform)
         {
@@ -118,10 +118,10 @@ public class Creature : MonoBehaviour
         }
     }
 
-    public void SetupCard(string name, Sprite artwork, string[] keywords, int attack, int health)
+    public void SetupCard(string name, string[] keywords, int attack, int health)
     {
         creatureName = name;
-        image = artwork;
+        image = Resources.Load<Sprite>($"Images/Artwork/{name}");
 
         foreach (string kw in keywords)
         {
@@ -136,12 +136,10 @@ public class Creature : MonoBehaviour
 
     private Sprite LoadKeywordSprite(string keywordName)
     {
-        return Resources.Load<Sprite>($"Images/Keywords/{keywordName}"); // Corrected to use the variable
+        return Resources.Load<Sprite>($"Images/Keywords/{keywordName}");
     }
+    //public abstract void Play();
+    //public abstract void Death();
+    //public abstract void Attack();
+    //public abstract void TakeDamage();
 }
-
-   // public abstract void Play();
-   // public abstract void Death();
-   // public abstract void Attack();
-   // public abstract void TakeDamage();
-
