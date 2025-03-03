@@ -5,7 +5,7 @@ using UnityEditor.Search;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
+public class Card : Creature, IDragHandler, IBeginDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
 {
     private bool isDragging;
     public Vector3 startPosition;
@@ -18,8 +18,9 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
     private List<FieldSlot> fieldSlot = new List<FieldSlot>(); // Use a list instead of array
 
     // Initialization
-    void Start()
-    {
+    new void Start()
+    {   
+        base.Start();
 
         field = GameObject.FindGameObjectWithTag("Field"); // Find the Field GameObject
         allCards.Add(this); // Register this card
@@ -30,6 +31,8 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
         {
             fieldSlot.Add(item);
         }
+
+        
     }
 
     void Update()
@@ -66,15 +69,7 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
         foreach (FieldSlot slot in fieldSlot)
         {
             if (slot.isOver){
-                Debug.Log("Card dropped on FieldSlot");
-                GameObject slotCard = transform.parent.gameObject;
-                transform.SetParent(slot.transform);
-                startPosition = slot.transform.position;
-                Destroy(slotCard);
-                moveCoroutine = StartCoroutine(SmoothMoveToPosition(startPosition));
-                isDragging = false;
-                slot.AddCard(this);
-                Destroy(this);
+                
             }
             else
             {
@@ -155,5 +150,25 @@ private IEnumerator SmoothMoveToPosition(Vector3 targetPos)
         if (isDragging) return; // Skip scaling down if the card is being dragged
         transform.localScale = originalScale;  // Restore the original scale
         transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y-50, transform.localPosition.z);
+    }
+
+    public override void Play()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public override void Death()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public override void TakeDamage()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public override void Attack(PlayedCard target)
+    {
+        throw new System.NotImplementedException();
     }
 }

@@ -149,7 +149,7 @@ GameObject:
   - component: {fileID: 5218084012562537766}
   - component: {fileID: 3964650324978471258}
   - component: {fileID: 2077397502719434452}
-  - component: {fileID: 4466122578392351287}
+  - component: {fileID: 4353115576072462940}
   m_Layer: 5
   m_Name: Card
   m_TagString: Untagged
@@ -314,7 +314,7 @@ MonoBehaviour:
     m_DisabledTrigger: Disabled
   m_Interactable: 1
   m_TargetGraphic: {fileID: 3964650324978471258}
---- !u!114 &4466122578392351287
+--- !u!114 &4353115576072462940
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -323,16 +323,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 356551589761541037}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 48ee08937299c584d8b7423e8fb595cd, type: 3}
+  m_Script: {fileID: 11500000, guid: 49de044262ff1dd40953a3da7d98f473, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 1
-  maxHealth: 1
-  attack: 1
+  health: 0
+  maxHealth: 0
+  attack: 0
   keyword: 
   keywordIcons: []
   image: {fileID: 0}
   creatureName: 
+  startPosition: {x: 0, y: 0, z: 0}
+  returnSpeed: 10
+  field: {fileID: 0}
+  originalScale: {x: 0, y: 0, z: 0}
 --- !u!1 &2706150117132249074
 GameObject:
   m_ObjectHideFlags: 0

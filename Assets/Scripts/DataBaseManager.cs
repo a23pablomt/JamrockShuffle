@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System;
 using System.Data;
 using Mono.Data.Sqlite;
 using System.IO;
@@ -28,36 +29,51 @@ public class SQLiteDBManager : MonoBehaviour
 
     private void InitializeDatabase()
     {
-        dbPath = Path.Combine(Application.streamingAssetsPath, "gameDatabase.db");
+        dbPath = Path.Combine(Application.streamingAssetsPath, "DataBase");
         connString = "URI=file:" + dbPath + ";Mode=ReadOnly";
     }
 
     public List<CardDataB> GetAllPlayers()
     {
-        List<CardDataB> players = new List<CardDataB>();
+        Dictionary<string, CardDataB> cards = new Dictionary<string, CardDataB>();
 
         using (var connection = new SqliteConnection(connString))
         {
             connection.Open();
             using (var command = connection.CreateCommand())
             {
-                command.CommandText = "SELECT Name, Score FROM CardDataB";
+                // SQL Query to fetch cards and their associated keywords
+                command.CommandText = @"
+                    SELECT c.id, c.name, c.attack, c.life, 
+                           GROUP_CONCAT(k.Name, ',') AS Keywords
+                    FROM Card c
+                    LEFT JOIN card_keywords ck ON c.Id = ck.cardId
+                    LEFT JOIN Keyword k ON ck.keywordId = k.Id
+                    GROUP BY c.id, c.name, c.attack, c.life;";
+
                 using (IDataReader reader = command.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        players.Add(new CardDataB
+                        string cardName = reader["name"].ToString();
+                        if (!cards.ContainsKey(cardName))
                         {
-                            Name = reader["Name"].ToString(),
-                            Attack = int.Parse(reader["Attack"].ToString()),
-                            Defense = int.Parse(reader["Attack"].ToString())
-                        });
+                            cards[cardName] = new CardDataB
+                            {
+                                Name = cardName,
+                                Attack = int.Parse(reader["attack"].ToString()),
+                                Defense = int.Parse(reader["life"].ToString()),
+                                Keywords = reader["keywords"] != DBNull.Value 
+                                           ? reader["keywords"].ToString().Split(',') 
+                                           : new string[0] // Handle cases where there are no keywords
+                            };
+                        }
                     }
                 }
             }
         }
 
-        return players;
+        return new List<CardDataB>(cards.Values);
     }
 }
 
@@ -67,4 +83,5 @@ public class CardDataB
     public string Name { get; set; }
     public int Attack { get; set; }
     public int Defense { get; set; }
+    public string[] Keywords { get; set; }
 }

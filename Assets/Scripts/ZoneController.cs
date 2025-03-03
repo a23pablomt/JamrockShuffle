@@ -19,6 +19,7 @@ public class ZoneController : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     {
         // Instantiate a new CardSlot from the prefab
         GameObject cardSlot = Instantiate(CardSlot, transform);
+    
         cardSlots.Add(cardSlot);
 
         ArrangeSlots();
