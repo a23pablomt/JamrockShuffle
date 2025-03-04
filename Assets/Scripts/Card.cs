@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Policy;
 using Unity.VisualScripting;
 using UnityEditor.Search;
 using UnityEngine;
@@ -9,10 +10,9 @@ public class Card : Creature, IDragHandler, IBeginDragHandler, IEndDragHandler, 
 {
     private bool isDragging;
     public Vector3 startPosition;
-    private static List<Card> allCards = new List<Card>(); // Store all cards
     private Coroutine moveCoroutine;
 
-    [SerializeField] private float returnSpeed = 10f; // Speed of smooth return
+    [SerializeField] private float returnSpeed = 5f; // Speed of smooth return
 
     public GameObject field;
     private List<FieldSlot> fieldSlot = new List<FieldSlot>(); // Use a list instead of array
@@ -23,8 +23,9 @@ public class Card : Creature, IDragHandler, IBeginDragHandler, IEndDragHandler, 
         base.Start();
 
         field = GameObject.FindGameObjectWithTag("Field"); // Find the Field GameObject
-        allCards.Add(this); // Register this card
         startPosition = transform.parent.position; // Set initial position
+        transform.position = new Vector3(400, 50, -1); // Set card to be on top of other cards
+        StartCoroutine(SmoothMoveToPosition(startPosition)); // Move card to start position
 
         // Populate fieldSlot with FieldSlot components found in children of field GameObject
         foreach (FieldSlot item in field.GetComponentsInChildren<FieldSlot>())
@@ -69,6 +70,10 @@ public class Card : Creature, IDragHandler, IBeginDragHandler, IEndDragHandler, 
         foreach (FieldSlot slot in fieldSlot)
         {
             if (slot.isOver){
+                slot.SetCard(this);
+                transform.parent.parent.GetComponent<ZoneController>().cardSlots.Remove(transform.parent.gameObject);
+                Destroy(transform.parent.gameObject);
+                Destroy(gameObject);
                 
             }
             else

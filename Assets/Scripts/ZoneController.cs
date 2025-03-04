@@ -1,11 +1,12 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class ZoneController : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] GameObject CardSlot; // Assign in Unity Inspector
-    private List<GameObject> cardSlots = new List<GameObject>(); // Store CardSlots
+    public List<GameObject> cardSlots = new List<GameObject>(); // Store CardSlots
     [SerializeField] float originalSpacing = 200f; // Adjust spacing between slots
 
     void Start()
@@ -43,8 +44,7 @@ public class ZoneController : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-            AddCardSlot();
+        if (Input.GetKeyDown(KeyCode.Space)) AddCardSlot();
         
         ArrangeSlots(); // Continuously space out slots as needed
     }

@@ -19,7 +19,7 @@ public class FieldSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     }
     public void SetCard(Card card)
     {
-        GameObject newCard = Instantiate(Resources.Load<GameObject>("Prefabs/Card"));
+        GameObject newCard = Instantiate(Resources.Load<GameObject>("Prefabs/PlayedCard"), transform);
         newCard.GetComponent<PlayedCard>().SetupCard(card.info);
     }
 

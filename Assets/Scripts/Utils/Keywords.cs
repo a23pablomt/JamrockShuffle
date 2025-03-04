@@ -5,7 +5,7 @@ public enum Keywords
     QuickDraw,
     Flying,
     SharpSight,
-    Lifesteal,
+    LifeSteal,
     Overwhelm,
     Displace,
     LastWhisper

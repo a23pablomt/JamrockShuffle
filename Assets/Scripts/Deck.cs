@@ -81,7 +81,6 @@ public class Deck : MonoBehaviour
         if (deck.Count > 0)
         {
             CardStaple card = deck[0];
-            Debug.Log("Drawn card keywords: " + string.Join(", ", card.Keywords));
             deck.RemoveAt(0);
             return card;
         }

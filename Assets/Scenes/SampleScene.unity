@@ -306,7 +306,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7790842125006256573, guid: 4992eaa5bba100e43a5f1aec115a59e1, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -75
+      value: -90
       objectReference: {fileID: 0}
     - target: {fileID: 7790842125006256573, guid: 4992eaa5bba100e43a5f1aec115a59e1, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -349,7 +349,6 @@ GameObject:
   m_Component:
   - component: {fileID: 218962340}
   - component: {fileID: 218962341}
-  - component: {fileID: 218962342}
   m_Layer: 5
   m_Name: CardField
   m_TagString: Field
@@ -435,25 +434,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &218962342
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 218962339}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7c4370303e509c20b92ab7377ce19794, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  health: 0
-  maxHealth: 0
-  attack: 0
-  keyword: 
-  keywordIcons: []
-  image: {fileID: 0}
-  creatureName: 
 --- !u!224 &224260843 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7790842125006256573, guid: 4992eaa5bba100e43a5f1aec115a59e1, type: 3}
@@ -864,7 +844,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7790842125006256573, guid: 4992eaa5bba100e43a5f1aec115a59e1, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 75
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 7790842125006256573, guid: 4992eaa5bba100e43a5f1aec115a59e1, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -1186,7 +1166,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7790842125006256573, guid: 4992eaa5bba100e43a5f1aec115a59e1, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -75
+      value: -90
       objectReference: {fileID: 0}
     - target: {fileID: 7790842125006256573, guid: 4992eaa5bba100e43a5f1aec115a59e1, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -1394,6 +1374,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CardSlot: {fileID: 8786615329751507273, guid: b4190b5a6553a1af6aa2f783ef463ca1, type: 3}
+  cardSlots: []
   originalSpacing: 400
 --- !u!1001 &1336296626
 PrefabInstance:
@@ -1502,7 +1483,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1544520171}
   - component: {fileID: 1544520173}
-  - component: {fileID: 1544520172}
   m_Layer: 5
   m_Name: CardField (2)
   m_TagString: Untagged
@@ -1529,25 +1509,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 232}
   m_SizeDelta: {x: 600, y: 170}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1544520172
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1544520170}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7c4370303e509c20b92ab7377ce19794, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  health: 0
-  maxHealth: 0
-  attack: 0
-  keyword: 
-  keywordIcons: []
-  image: {fileID: 0}
-  creatureName: 
 --- !u!212 &1544520173
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1703,7 +1664,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 4353115576072462940, guid: 500281a41c46d9640bc397fa24d7df7a, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -1962,7 +1924,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7790842125006256573, guid: 4992eaa5bba100e43a5f1aec115a59e1, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 75
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 7790842125006256573, guid: 4992eaa5bba100e43a5f1aec115a59e1, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -2167,7 +2129,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2090735507}
   - component: {fileID: 2090735509}
-  - component: {fileID: 2090735508}
   m_Layer: 5
   m_Name: CardField (1)
   m_TagString: Untagged
@@ -2198,25 +2159,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 85}
   m_SizeDelta: {x: 600, y: 170}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &2090735508
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2090735506}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7c4370303e509c20b92ab7377ce19794, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  health: 0
-  maxHealth: 0
-  attack: 0
-  keyword: 
-  keywordIcons: []
-  image: {fileID: 0}
-  creatureName: 
 --- !u!212 &2090735509
 SpriteRenderer:
   m_ObjectHideFlags: 0

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -60,6 +61,9 @@ public class PlayedCard : Creature
     new void Start()
     {
         base.Start();
+        transform.localScale = new Vector3(0.66f, 0.66f, 0.66f);
+        SmoothMoveToPosition(transform.position);
+        
     }
 
     // Update is called once per frame
@@ -67,5 +71,15 @@ public class PlayedCard : Creature
     {
         
     }
+
+    private IEnumerator SmoothMoveToPosition(Vector3 targetPos)
+{
+    while (Vector3.Distance(transform.position, targetPos) > 0.01f)
+    {
+        transform.position = Vector3.Lerp(transform.position, targetPos, 5f * Time.deltaTime);
+        yield return null;
+    }
+    transform.position = targetPos;
+}
 
 }

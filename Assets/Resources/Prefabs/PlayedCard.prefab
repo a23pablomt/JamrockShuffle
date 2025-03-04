@@ -149,9 +149,9 @@ GameObject:
   - component: {fileID: 5218084012562537766}
   - component: {fileID: 3964650324978471258}
   - component: {fileID: 2077397502719434452}
-  - component: {fileID: 4353115576072462940}
+  - component: {fileID: 4438960122994275034}
   m_Layer: 5
-  m_Name: Card
+  m_Name: PlayedCard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -177,8 +177,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.2306, y: 0}
-  m_SizeDelta: {x: 149.5388, y: 210}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 150, y: 210}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!212 &396120270662044992
 SpriteRenderer:
@@ -314,7 +314,7 @@ MonoBehaviour:
     m_DisabledTrigger: Disabled
   m_Interactable: 1
   m_TargetGraphic: {fileID: 3964650324978471258}
---- !u!114 &4353115576072462940
+--- !u!114 &4438960122994275034
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -323,7 +323,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 356551589761541037}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 49de044262ff1dd40953a3da7d98f473, type: 3}
+  m_Script: {fileID: 11500000, guid: ae48881ab3ee74348aef8b444050846a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   health: 0
@@ -332,10 +332,6 @@ MonoBehaviour:
   keyword: 
   image: {fileID: 0}
   creatureName: 
-  startPosition: {x: 0, y: 0, z: 0}
-  returnSpeed: 10
-  field: {fileID: 0}
-  originalScale: {x: 0, y: 0, z: 0}
 --- !u!1 &2706150117132249074
 GameObject:
   m_ObjectHideFlags: 0
