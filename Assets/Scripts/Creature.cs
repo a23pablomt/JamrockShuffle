@@ -34,7 +34,7 @@ public abstract class Creature : MonoBehaviour
                 {
                     if (image == null)
                     {
-                        Debug.Log("Failed to load sprite: Images/Terence");
+                        Debug.Log("Failed to load sprite");
                     }
                     else
                     {
@@ -142,5 +142,5 @@ public abstract class Creature : MonoBehaviour
     public abstract void Play();
     public abstract void Death();
     public abstract void Attack(PlayedCard target);
-    public abstract void TakeDamage();
+    public abstract void TakeDamage(int damage);
 }

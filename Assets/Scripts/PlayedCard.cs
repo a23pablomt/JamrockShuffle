@@ -1,12 +1,21 @@
 using System;
 using System.Collections;
+using System.Runtime.Remoting.Lifetime;
+using System.Security.Policy;
 using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayedCard : Creature
 {
+
+    ZoneController zoneController;
+
     public override void Attack(PlayedCard source)
     {
+        if(source == null)
+        {
+            return;
+        }
         foreach(Keywords kw in keyword)
         {
             if(kw.ToString() == "Flying" && !source.keyword.Contains(Keywords.SharpSight))
@@ -26,7 +35,7 @@ public class PlayedCard : Creature
                 
             }
         }
-        source.TakeDamage();
+        source.TakeDamage(attack);
     }
 
     public override void Death()
@@ -47,22 +56,28 @@ public class PlayedCard : Creature
         {
             if(kw.ToString() == "QuickDraw")
             {
-
+                zoneController.AddCardSlot();
             }
         }
     }
 
-    public override void TakeDamage()
+    public override void TakeDamage(int damage)
     {
-        throw new System.NotImplementedException();
+        this.health -= damage;
+        if(health <= 0)
+        {
+            Death();
+        }
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     new void Start()
     {
         base.Start();
+        zoneController = GameObject.FindGameObjectWithTag("CardZone").GetComponent<ZoneController>();
         transform.localScale = new Vector3(0.66f, 0.66f, 0.66f);
         SmoothMoveToPosition(transform.position);
+        Play();
         
     }
 
@@ -73,13 +88,13 @@ public class PlayedCard : Creature
     }
 
     private IEnumerator SmoothMoveToPosition(Vector3 targetPos)
-{
-    while (Vector3.Distance(transform.position, targetPos) > 0.01f)
     {
-        transform.position = Vector3.Lerp(transform.position, targetPos, 5f * Time.deltaTime);
-        yield return null;
+        while (Vector3.Distance(transform.position, targetPos) > 0.01f)
+        {
+            transform.position = Vector3.Lerp(transform.position, targetPos, 5f * Time.deltaTime);
+            yield return null;
+        }
+        transform.position = targetPos;
     }
-    transform.position = targetPos;
-}
 
 }
