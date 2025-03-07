@@ -43,9 +43,7 @@ public class ZoneController : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     }
 
     void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space)) AddCardSlot();
-        
+    {        
         ArrangeSlots(); // Continuously space out slots as needed
     }
     public void OnPointerEnter(PointerEventData eventData)

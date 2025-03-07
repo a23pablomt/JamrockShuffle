@@ -9,6 +9,7 @@ public class Deck : MonoBehaviour
     private List<CardStaple> deck; // List of cards in the deck
     private List<CardStaple> fulldeck; 
     private List<CardDataB> standardCard;
+    GameManager gameManager;
 
     private void Awake()
     {
@@ -84,6 +85,7 @@ public class Deck : MonoBehaviour
             deck.RemoveAt(0);
             return card;
         }
+        gameManager.PlayerLoose();
         return null;
     }
 

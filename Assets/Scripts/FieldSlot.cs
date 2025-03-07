@@ -17,10 +17,10 @@ public class FieldSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     {
         
     }
-    public void SetCard(Card card)
+    public void SetCard(CardStaple card)
     {
         GameObject newCard = Instantiate(Resources.Load<GameObject>("Prefabs/PlayedCard"), transform);
-        newCard.GetComponent<PlayedCard>().SetupCard(card.info);
+        newCard.GetComponent<PlayedCard>().SetupCard(card);
     }
 
     public void OnPointerEnter(PointerEventData eventData)

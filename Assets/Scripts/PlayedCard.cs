@@ -2,37 +2,63 @@ using System;
 using System.Collections;
 using System.Runtime.Remoting.Lifetime;
 using System.Security.Policy;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayedCard : Creature
 {
 
     ZoneController zoneController;
+    GameManager gameManager;
 
     public override void Attack(PlayedCard source)
     {
-        if(source == null)
+        if(source == null || attack == 0)
         {
             return;
         }
+        StartCoroutine(SmoothMoveToPosition(new Vector3(10f, this.transform.position.y, this.transform.position.z)));
+        StartCoroutine(SmoothMoveToPosition(new Vector3(-10f, this.transform.position.y, this.transform.position.z)));
         foreach(Keywords kw in keyword)
         {
             if(kw.ToString() == "Flying" && !source.keyword.Contains(Keywords.SharpSight))
             {
-
+                if(this.transform.parent.tag == "EnemyField")
+                {
+                    gameManager.playerHp -= attack;
+                }
+                else
+                {
+                    gameManager.enemyHp -= attack;
+                }
             }
             else if(kw.ToString() == "Overwhelm")
             {
                 if(attack > source.health)
                 {
-                    
+                    if(this.transform.parent.tag == "EnemyField")
+                    {
+                        gameManager.playerHp -= attack - source.health;
+                    }
+                    else
+                    {
+                        gameManager.enemyHp -= attack - source.health;
+                    }
                 }
             }
             
             if(kw.ToString() == "LifeSteal")
             {
-                
+                if(this.transform.parent.tag == "EnemyField")
+                {
+                    gameManager.enemyHp += attack;
+                }
+                else
+                {
+                    gameManager.playerHp += attack;
+                }
             }
         }
         source.TakeDamage(attack);
@@ -44,7 +70,14 @@ public class PlayedCard : Creature
         {
             if(kw.ToString() == "LastWhisper")
             {
-
+                if(this.transform.parent.tag == "EnemyField")
+                {
+                    gameManager.playerHp -= attack;
+                }
+                else
+                {
+                    gameManager.enemyHp -= attack;
+                }
             }
         }
         Destroy(gameObject);
@@ -75,7 +108,7 @@ public class PlayedCard : Creature
     {
         base.Start();
         zoneController = GameObject.FindGameObjectWithTag("CardZone").GetComponent<ZoneController>();
-        transform.localScale = new Vector3(0.66f, 0.66f, 0.66f);
+        transform.localScale = new Vector3(0.67f, 0.67f, 0.67f);
         SmoothMoveToPosition(transform.position);
         Play();
         
@@ -84,10 +117,10 @@ public class PlayedCard : Creature
     // Update is called once per frame
     void Update()
     {
-        
+        this.transform.GetChild(3).GetChild(1).GetComponent<TextMeshProUGUI>().text = health.ToString();
     }
 
-    private IEnumerator SmoothMoveToPosition(Vector3 targetPos)
+    public IEnumerator SmoothMoveToPosition(Vector3 targetPos)
     {
         while (Vector3.Distance(transform.position, targetPos) > 0.01f)
         {

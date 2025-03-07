@@ -8,6 +8,7 @@ using UnityEngine.EventSystems;
 
 public class Card : Creature, IDragHandler, IBeginDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
 {
+    GameManager gameManager;
     private bool isDragging;
     public Vector3 startPosition;
     private Coroutine moveCoroutine;
@@ -22,6 +23,7 @@ public class Card : Creature, IDragHandler, IBeginDragHandler, IEndDragHandler, 
     {   
         base.Start();
 
+        gameManager = GameManager.Instance;
         field = GameObject.FindGameObjectWithTag("Field"); // Find the Field GameObject
         startPosition = transform.parent.position; // Set initial position
         transform.position = new Vector3(400, 50, -1); // Set card to be on top of other cards
@@ -69,11 +71,12 @@ public class Card : Creature, IDragHandler, IBeginDragHandler, IEndDragHandler, 
         transform.localScale = originalScale;
         foreach (FieldSlot slot in fieldSlot)
         {
-            if (slot.isOver){
-                slot.SetCard(this);
+            if (slot.isOver && !gameManager.cardThisRound){
+                slot.SetCard(this.info);
                 transform.parent.parent.GetComponent<ZoneController>().cardSlots.Remove(transform.parent.gameObject);
                 Destroy(transform.parent.gameObject);
                 Destroy(gameObject);
+                gameManager.cardThisRound = true;
                 
             }
             else
