@@ -1,4 +1,6 @@
 using System.Collections;
+using System.Net.NetworkInformation;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerFieldController : MonoBehaviour
@@ -8,7 +10,7 @@ public class PlayerFieldController : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        if(this.gameObject.tag == "PlayerField" || this.gameObject.tag == "NextField") enemyField = GameObject.FindGameObjectWithTag("EnemyField");
+        if(this.gameObject.tag == "Field" || this.gameObject.tag == "NextField") enemyField = GameObject.FindGameObjectWithTag("EnemyField");
         else enemyField = GameObject.FindGameObjectWithTag("Field");
         cardZone = GameObject.FindGameObjectWithTag("CardZone");
     }
@@ -24,11 +26,12 @@ public class PlayerFieldController : MonoBehaviour
         if(this.gameObject.tag == "NextField") {
             foreach (Transform child in transform)
             {
-                if (child.GetChild(0).GetComponent<PlayedCard>() != null && enemyField.transform.GetChild(child.GetSiblingIndex()) == null)
+                
+                if (child.childCount > 0 && enemyField.transform.GetChild(child.GetSiblingIndex()).childCount == 1)
                 {
-                    PlayedCard card = child.GetChild(0).GetComponent<PlayedCard>();
-                    card.transform.SetParent(enemyField.transform);
-                    card.SmoothMoveToPosition(enemyField.transform.position);
+                    PlayedCard card = child.GetComponentInChildren<PlayedCard>();
+                    card.transform.SetParent(enemyField.transform.GetChild(child.GetSiblingIndex()));
+                    yield return StartCoroutine(card.SmoothMoveToPosition(new Vector3(card.transform.position.x, enemyField.transform.position.y, 0)));
                 }
             }
             int occupiedSlots = 0;
@@ -43,19 +46,35 @@ public class PlayerFieldController : MonoBehaviour
                 else
                 {
                     GameObject newCard = Instantiate(Resources.Load<GameObject>("Prefabs/PlayedCard"), slot);
-                    CardDataB cardData = SQLiteDBManager.Instance.GetCard(Random.Range(1, 16));
+                    CardDataB cardData = SQLiteDBManager.Instance.GetCard(Random.Range(1, 26));
 
                     newCard.GetComponent<PlayedCard>().SetupCard(new CardStaple(cardData.Name, cardData.Keywords, cardData.Attack, cardData.Defense));
-                    occupiedSlots=4;
+                    occupiedSlots+=Random.Range(3, 4);
                 }
             }
         }
-        else foreach (Transform child in transform)
+        else foreach (Transform child in this.transform)
         {
-            var creature = child.GetComponent<PlayedCard>();
-            creature.Attack(enemyField.transform.GetChild(child.GetSiblingIndex()).GetChild(0).GetComponent<PlayedCard>());
+            var creature = child.GetComponentInChildren<PlayedCard>();
+            PlayedCard enemy = enemyField.transform.GetChild(child.GetSiblingIndex()).GetComponentInChildren<PlayedCard>();
+            if (creature == null) {
+                Debug.Log("No creature found");
+                continue;
+            }
+            yield return creature.Attack(enemy, this.tag == "Field" ? "Player" : "Enemy");
         }
         if(this.gameObject.name == "PlayerField") cardZone.GetComponent<ZoneController>().AddCardSlot();
         yield return null;
+    }
+
+    internal void ResetField()
+    {
+        foreach (Transform child in transform)
+        {
+            if (child.childCount > 1)
+            {
+                Destroy(child.GetChild(1).gameObject);
+            }
+        }
     }
 }

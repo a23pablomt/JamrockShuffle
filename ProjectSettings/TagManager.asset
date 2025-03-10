@@ -9,6 +9,7 @@ TagManager:
   - CardZone
   - NextField
   - Hp
+  - Scenes
   layers:
   - Default
   - TransparentFX

@@ -85,7 +85,7 @@ public class Deck : MonoBehaviour
             deck.RemoveAt(0);
             return card;
         }
-        gameManager.PlayerLoose();
+        else gameManager.PlayerLoose();
         return null;
     }
 

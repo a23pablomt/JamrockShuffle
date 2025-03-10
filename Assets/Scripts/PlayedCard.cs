@@ -1,83 +1,77 @@
-using System;
 using System.Collections;
-using System.Runtime.Remoting.Lifetime;
-using System.Security.Policy;
-using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
+using TMPro;
 using UnityEngine.UI;
+using Unity.Jobs.LowLevel.Unsafe;
+using Unity.VisualScripting;
+using System;
+using System.Management.Instrumentation;
+using System.Media;
 
 public class PlayedCard : Creature
 {
+    private ZoneController zoneController;
+    private GameManager gameManager;
 
-    ZoneController zoneController;
-    GameManager gameManager;
-
-    public override void Attack(PlayedCard source)
+    public override IEnumerator Attack(PlayedCard obj, string type)
     {
-        if(source == null || attack == 0)
-        {
-            return;
+        Debug.Log(obj);
+        if (attack == 0) yield break;
+        AudioSource audioSource = GetComponent<AudioSource>();
+        audioSource.Play();
+        yield return this.StartCoroutine(this.SmoothMoveToPosition(transform.position + new Vector3(0f, 0.2f, 0f)));
+        if (ReferenceEquals(obj, null)) {
+            Debug.Log("No target");
+            if(type == "Player"){
+                gameManager.enemyHp -= attack;
+                if(keyword.Contains(Keywords.LifeSteal))gameManager.playerHp += attack;
+                }
+            else{
+                gameManager.playerHp -= attack;
+                if(keyword.Contains(Keywords.LifeSteal))gameManager.enemyHp += attack;
+                }
+            yield return StartCoroutine(SmoothMoveToPosition(transform.position + new Vector3(0f, -0.2f, 0f)));
+            yield break;
         }
-        StartCoroutine(SmoothMoveToPosition(new Vector3(10f, this.transform.position.y, this.transform.position.z)));
-        StartCoroutine(SmoothMoveToPosition(new Vector3(-10f, this.transform.position.y, this.transform.position.z)));
-        foreach(Keywords kw in keyword)
+
+        
+
+        foreach (Keywords kw in keyword)
         {
-            if(kw.ToString() == "Flying" && !source.keyword.Contains(Keywords.SharpSight))
+            if (kw == Keywords.Flying && !obj.keyword.Contains(Keywords.SharpSight))
             {
-                if(this.transform.parent.tag == "EnemyField")
-                {
-                    gameManager.playerHp -= attack;
-                }
-                else
-                {
-                    gameManager.enemyHp -= attack;
-                }
+                if(type == "Player")gameManager.enemyHp -= attack;
+                else gameManager.playerHp -= attack;
             }
-            else if(kw.ToString() == "Overwhelm")
+            else if (kw == Keywords.Overwhelm && attack > obj.health)
             {
-                if(attack > source.health)
-                {
-                    if(this.transform.parent.tag == "EnemyField")
-                    {
-                        gameManager.playerHp -= attack - source.health;
-                    }
-                    else
-                    {
-                        gameManager.enemyHp -= attack - source.health;
-                    }
-                }
+                int damages = attack - obj.health;
+                obj.TakeDamage(attack);
+                if(type == "Player")gameManager.enemyHp -= damages;
+                else gameManager.playerHp -= damages;
             }
-            
-            if(kw.ToString() == "LifeSteal")
+
+            if (kw == Keywords.LifeSteal)
             {
-                if(this.transform.parent.tag == "EnemyField")
-                {
-                    gameManager.enemyHp += attack;
-                }
-                else
-                {
-                    gameManager.playerHp += attack;
-                }
+                if(type == "Player")gameManager.playerHp += attack;
+                else gameManager.enemyHp += attack;
             }
         }
-        source.TakeDamage(attack);
+        Debug.Log("Attack");
+        int damage = attack;
+        obj.TakeDamage(damage);
+        if (obj.keyword.Contains(Keywords.Displace)){ this.TakeDamage(1); Debug.Log("Displace"); };
+        yield return StartCoroutine(SmoothMoveToPosition(transform.position + new Vector3(0f, -0.2f, 0f)));
     }
 
     public override void Death()
     {
-        foreach(Keywords kw in keyword)
+        foreach (Keywords kw in keyword)
         {
-            if(kw.ToString() == "LastWhisper")
+            if (kw == Keywords.LastWhisper)
             {
-                if(this.transform.parent.tag == "EnemyField")
-                {
-                    gameManager.playerHp -= attack;
-                }
-                else
-                {
-                    gameManager.enemyHp -= attack;
-                }
+                if (transform.parent.transform.parent.tag == "Field") gameManager.enemyHp -= attack;
+                else gameManager.playerHp -= attack;  
             }
         }
         Destroy(gameObject);
@@ -85,39 +79,40 @@ public class PlayedCard : Creature
 
     public override void Play()
     {
-        foreach(Keywords kw in keyword)
+        foreach (Keywords kw in keyword)
         {
-            if(kw.ToString() == "QuickDraw")
-            {
-                zoneController.AddCardSlot();
-            }
+            if (kw == Keywords.QuickDraw && transform.parent.transform.parent.tag == "Field") zoneController.AddCardSlot();
         }
     }
 
     public override void TakeDamage(int damage)
     {
-        this.health -= damage;
-        if(health <= 0)
-        {
-            Death();
-        }
+        health -= damage;
+        if (health <= 0) Death();
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    // Start is called once before the first execution of Update
     new void Start()
     {
         base.Start();
+        gameManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameManager>();
         zoneController = GameObject.FindGameObjectWithTag("CardZone").GetComponent<ZoneController>();
         transform.localScale = new Vector3(0.67f, 0.67f, 0.67f);
-        SmoothMoveToPosition(transform.position);
         Play();
-        
+        UpdateVisuals(); // Ensure UI updates correctly
     }
 
-    // Update is called once per frame
     void Update()
     {
-        this.transform.GetChild(3).GetChild(1).GetComponent<TextMeshProUGUI>().text = health.ToString();
+        Transform stats = transform.GetChild(3);
+        if (stats != null)
+        {
+            TextMeshProUGUI healthText = stats.GetChild(1).GetComponent<TextMeshProUGUI>();
+            if (healthText != null){ 
+                healthText.text = health.ToString();
+            }
+        }
+        if (health <= 0) Death();
     }
 
     public IEnumerator SmoothMoveToPosition(Vector3 targetPos)
@@ -129,5 +124,4 @@ public class PlayedCard : Creature
         }
         transform.position = targetPos;
     }
-
 }

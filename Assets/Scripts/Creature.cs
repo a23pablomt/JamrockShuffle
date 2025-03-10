@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections;
 
 public abstract class Creature : MonoBehaviour
 {
@@ -14,97 +15,102 @@ public abstract class Creature : MonoBehaviour
     public Sprite image;
     public string creatureName;
 
+    private TextMeshProUGUI nameText;
+    private Image artworkImage;
+    private Transform keywordsParent;
+    private TextMeshProUGUI attackText;
+    private TextMeshProUGUI healthText;
+
     protected void Start()
     {
+        CacheUIElements();
+        UpdateVisuals();
+    }
 
+    private void CacheUIElements()
+    {
         foreach (Transform child in transform)
         {
-            if (child.name == "CardName")
+            switch (child.name)
             {
-                var textComponent = child.GetComponent<TextMeshProUGUI>();
-                if (textComponent != null)
-                {
-                    textComponent.text = creatureName;
-                }
-            }
-            else if (child.name == "Artwork")
-            {
-                var imageComponent = child.GetComponent<Image>();
-                if (imageComponent != null)
-                {
-                    if (image == null)
+                case "CardName":
+                    nameText = child.GetComponent<TextMeshProUGUI>();
+                    break;
+
+                case "Artwork":
+                    artworkImage = child.GetComponent<Image>();
+                    break;
+
+                case "Keywords":
+                    keywordsParent = child;
+                    break;
+
+                case "Stats":
+                    foreach (Transform statChild in child.transform)
                     {
-                        Debug.Log("Failed to load sprite");
-                    }
-                    else
-                    {
-                        imageComponent.sprite = image;
-                    }
-                }
-            }
-            else if (child.name == "Keywords")
-            {
-                float spacing = 40f; // Adjusted to reduce spacing
-                int keywordCount = keyword.Count;
-                
-                if (keywordCount == 0) return; // Exit if there are no keywords
-
-                float totalWidth = (keywordCount - 1) * spacing; // Total space occupied by all keywords
-                float startX = -totalWidth / 2; // Center starting position
-
-                int index = 0; // Track position in loop
-
-                foreach (Keywords kw in keyword)
-                {
-                    var keywordSprite = LoadKeywordSprite(kw.ToString());
-                    if (keywordSprite == null)
-                        continue;
-
-                    GameObject keywordPrefab = Resources.Load<GameObject>("Prefabs/KeywordVisual");
-                    if (keywordPrefab == null)
-                        continue;
-
-                    GameObject keywordObject = Instantiate(keywordPrefab, child.transform);
-                    if (keywordObject == null)
-                        continue;
-
-                    Image imageComponent = keywordObject.GetComponent<Image>();
-                    if (imageComponent != null)
-                    {
-                        imageComponent.sprite = keywordSprite;
-                    }
-
-                    // Apply positioning to center-align the keywords
-                    RectTransform rectTransform = keywordObject.GetComponent<RectTransform>();
-                    if (rectTransform != null)
-                    {
-                        rectTransform.anchoredPosition = new Vector2(startX + (index * spacing), 0);
-                    }
-
-                    index++; // Move to the next keyword
-                }
-            }
-            else if (child.name == "Stats")
-            {
-                foreach (Transform statChild in child.transform)
-                {
-                    if (statChild.name == "Attack")
-                    {
-                        var textComponent = statChild.GetComponent<TextMeshProUGUI>();
-                        if (textComponent != null)
+                        if (statChild.name == "Attack")
                         {
-                            textComponent.text = attack.ToString();
+                            attackText = statChild.GetComponent<TextMeshProUGUI>();
+                        }
+                        else if (statChild.name == "Health")
+                        {
+                            healthText = statChild.GetComponent<TextMeshProUGUI>();
                         }
                     }
-                    else if (statChild.name == "Health")
-                    {
-                        var textComponent = statChild.GetComponent<TextMeshProUGUI>();
-                        if (textComponent != null)
-                        {
-                            textComponent.text = health.ToString();
-                        }
-                    }
-                }
+                    break;
+            }
+        }
+    }
+
+    protected void UpdateVisuals()
+    {
+        if (nameText != null)
+            nameText.text = creatureName;
+
+        if (artworkImage != null)
+        {
+            if (image != null)
+                artworkImage.sprite = image;
+        }
+
+        if (attackText != null)
+            attackText.text = attack.ToString();
+
+        if (healthText != null)
+            healthText.text = health.ToString();
+
+        PopulateKeywords();
+    }
+
+    private void PopulateKeywords()
+    {
+        if (keywordsParent == null) return;
+        
+        foreach (Transform child in keywordsParent)
+            Destroy(child.gameObject); // Clear existing keyword icons
+
+        float spacing = 30f;
+        int keywordCount = keyword.Count;
+        if (keywordCount == 0) return;
+
+        float totalWidth = (keywordCount - 1) * spacing;
+        float startX = -totalWidth / 2;
+
+        for (int i = 0; i < keywordCount; i++)
+        {
+            Sprite keywordSprite = LoadKeywordSprite(keyword[i].ToString());
+            if (keywordSprite == null) continue;
+
+            GameObject keywordPrefab = Resources.Load<GameObject>("Prefabs/KeywordVisual");
+            if (keywordPrefab == null) continue;
+
+            GameObject keywordObject = Instantiate(keywordPrefab, keywordsParent);
+            keywordObject.GetComponent<Image>().sprite = keywordSprite;
+
+            RectTransform rectTransform = keywordObject.GetComponent<RectTransform>();
+            if (rectTransform != null)
+            {
+                rectTransform.anchoredPosition = new Vector2(startX + (i * spacing), 0);
             }
         }
     }
@@ -120,27 +126,28 @@ public abstract class Creature : MonoBehaviour
         {
             if (Enum.TryParse(kw, out Keywords parsedKeyword))
             {
-            keyword.Add(parsedKeyword);
+                keyword.Add(parsedKeyword);
             }
             else
             {
-            Debug.LogWarning($"Keyword '{kw}' could not be parsed.");
+                Debug.LogWarning($"Keyword '{kw}' could not be parsed.");
             }
         }
 
-        this.attack = cardStaple.Attack;
-        this.health = cardStaple.Defense;
+        attack = cardStaple.Attack;
+        health = cardStaple.Defense;
         maxHealth = health;
 
-        this.Start();
+        UpdateVisuals(); // Instead of calling Start()
     }
 
     private Sprite LoadKeywordSprite(string keywordName)
     {
         return Resources.Load<Sprite>($"Images/Keywords/{keywordName}");
     }
+
     public abstract void Play();
     public abstract void Death();
-    public abstract void Attack(PlayedCard target);
+    public abstract IEnumerator Attack(PlayedCard target, string type);
     public abstract void TakeDamage(int damage);
 }

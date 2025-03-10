@@ -175,7 +175,7 @@ private IEnumerator SmoothMoveToPosition(Vector3 targetPos)
         throw new System.NotImplementedException();
     }
 
-    public override void Attack(PlayedCard target)
+    public override IEnumerator Attack(PlayedCard target, string type)
     {
         throw new System.NotImplementedException();
     }
