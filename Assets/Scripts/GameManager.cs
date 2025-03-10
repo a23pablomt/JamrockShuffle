@@ -34,6 +34,11 @@ public class GameManager : MonoBehaviour
 
     public void Reset()
     {
+        playerField = GameObject.FindGameObjectWithTag("Field")?.GetComponent<PlayerFieldController>();
+        waitingField = GameObject.FindGameObjectWithTag("NextField")?.GetComponent<PlayerFieldController>();
+        enemyField = GameObject.FindGameObjectWithTag("EnemyField")?.GetComponent<PlayerFieldController>();
+        hps = GameObject.FindGameObjectWithTag("Hp");
+
         playerHp = 20;
         enemyHp = 20;
         cardThisRound = false;
@@ -120,6 +125,7 @@ public class GameManager : MonoBehaviour
         StopAllCoroutines();
         Reset();
         GameObject.FindGameObjectWithTag("Scenes").GetComponent<SceneController>().LoadScene("GameOver");
+        Destroy(this.gameObject);
     }
 
     public void PlayerWin()
@@ -127,5 +133,6 @@ public class GameManager : MonoBehaviour
         StopAllCoroutines();
         Reset();
         GameObject.FindGameObjectWithTag("Scenes").GetComponent<SceneController>().LoadScene("Win");
+        Destroy(this.gameObject);
     }
 }

@@ -7,7 +7,7 @@ public class ZoneController : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 {
     [SerializeField] GameObject CardSlot; // Assign in Unity Inspector
     public List<GameObject> cardSlots = new List<GameObject>(); // Store CardSlots
-    [SerializeField] float originalSpacing = 200f; // Adjust spacing between slots
+    [SerializeField] float originalSpacing = 300f; // Adjust spacing between slots
 
     void Start()
     {
@@ -49,7 +49,7 @@ public class ZoneController : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     public void OnPointerEnter(PointerEventData eventData)
     {
         // Move the parent zone relative to its original position (in local space)
-        transform.localPosition = new Vector3(0, -237, 0);
+        transform.localPosition = new Vector3(0, transform.localPosition.y+50, 0);
 
         // Re-arrange child slots after moving the parent
         ArrangeSlots(); // Ensure the slots adjust their positions after parent movement
@@ -58,7 +58,7 @@ public class ZoneController : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     public void OnPointerExit(PointerEventData eventData)
     {
         // Move the parent zone relative to its original position (in local space)
-        transform.localPosition = new Vector3(0, -290, 0);
+        transform.localPosition = new Vector3(0, transform.localPosition.y-50, 0);
 
         // Re-arrange child slots after moving the parent
         ArrangeSlots(); // Ensure the slots adjust their positions after parent movement
