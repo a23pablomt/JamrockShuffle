@@ -42,7 +42,5 @@ El juego está basado en un juego de cartas homónimo jugado en Clattamount, una
 
 ## ASSETS
 
-- Música
-- Efectos de sonido
-- Modelos 2D/3D
-- ...
+Enlace a Figma, donde encontrarás los diseños y assets utilizados para este proyecto:
+- https://www.figma.com/design/mMpviLYLjcmSNzQVERvjB3/Untitled?node-id=0-1&p=f&t=FuAFOCJNJnBIMbUh-0
