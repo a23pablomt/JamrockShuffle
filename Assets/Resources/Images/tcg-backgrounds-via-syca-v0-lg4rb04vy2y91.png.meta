@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      tcg-backgrounds-via-syca-v0-lg4rb04vy2y91_0: -8619126060150252625
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
